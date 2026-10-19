@@ -1,18 +1,9 @@
-import {
-  Types
-} from "mongoose";
-
-import {
-  RfpModel
-} from "../models/rfp.model.js";
-
-import type {
-  RequirementAnalysisOutput
-} from "../validators/requirement-analysis.validator.js";
-
+import { Types } from "mongoose";
+import { RfpModel } from "../models/rfp.model.js";
+import type { RequirementAnalysisOutput } from "../validators/requirement-analysis.validator.js";
 import type {
   ConfirmRequirementsInput,
-  CreateRfpInput
+  CreateRfpInput,
 } from "../validators/rfp.validators.js";
 
 export interface TenantContext {
@@ -20,102 +11,69 @@ export interface TenantContext {
   userId: string;
 }
 
-function toObjectId(
-  value: string,
-  fieldName: string
-): Types.ObjectId {
+function toObjectId(value: string, fieldName: string): Types.ObjectId {
   if (!Types.ObjectId.isValid(value)) {
-    throw new Error(
-      `${fieldName} is not a valid ObjectId`
-    );
+    throw new Error(`${fieldName} is not a valid ObjectId`);
   }
 
   return new Types.ObjectId(value);
 }
 
 export class RfpRepository {
-  async createDraft(
-    context: TenantContext,
-    input: CreateRfpInput
-  ) {
-    const tenantId =
-      toObjectId(
-        context.tenantId,
-        "tenantId"
-      );
+  async createDraft(context: TenantContext, input: CreateRfpInput) {
+    const tenantId = toObjectId(context.tenantId, "tenantId");
 
-    const userId =
-      toObjectId(
-        context.userId,
-        "userId"
-      );
+    const userId = toObjectId(context.userId, "userId");
 
     return RfpModel.create({
       tenantId,
 
-      rfpNumber:
-        input.rfpNumber,
+      rfpNumber: input.rfpNumber,
 
-      title:
-        input.title,
+      title: input.title,
 
-      category:
-        input.category,
+      category: input.category,
 
-      requirementBrief:
-        input.requirementBrief,
+      requirementBrief: input.requirementBrief,
 
-      budget:
-        input.budget,
+      budget: input.budget,
 
-      status:
-        "DRAFT",
+      status: "DRAFT",
 
-      createdBy:
-        userId,
+      createdBy: userId,
 
-      updatedBy:
-        userId,
+      updatedBy: userId,
 
-      version:
-        1
+      version: 1,
     });
   }
 
-  async list(
-    context: TenantContext
-  ) {
+  async list(context: TenantContext) {
     return RfpModel.find({
-      tenantId:
-        context.tenantId
+      tenantId: context.tenantId,
     })
       .sort({
-        updatedAt: -1
+        updatedAt: -1,
       })
       .lean();
   }
 
-  async findById(
-    context: TenantContext,
-    rfpId: string
-  ) {
+  async findById(context: TenantContext, rfpId: string) {
     if (!Types.ObjectId.isValid(rfpId)) {
       return null;
     }
 
     return RfpModel.findOne({
-      _id:
-        rfpId,
+      _id: rfpId,
 
-      tenantId:
-        context.tenantId
+      tenantId: context.tenantId,
     }).lean();
   }
 
   async startRequirementAnalysis(
     context: TenantContext,
     rfpId: string,
-    runId: string
+    runId: string,
   ) {
     if (!Types.ObjectId.isValid(rfpId)) {
       return null;
@@ -123,39 +81,30 @@ export class RfpRepository {
 
     return RfpModel.findOneAndUpdate(
       {
-        _id:
-          rfpId,
+        _id: rfpId,
 
-        tenantId:
-          context.tenantId,
+        tenantId: context.tenantId,
 
-        status:
-          "DRAFT"
+        status: "DRAFT",
       },
       {
         $set: {
-          status:
-            "ANALYZING_REQUIREMENTS",
+          status: "ANALYZING_REQUIREMENTS",
 
-          requirementAnalysisRunId:
-            runId,
+          requirementAnalysisRunId: runId,
 
-          updatedBy:
-            context.userId
+          updatedBy: context.userId,
         },
 
         $inc: {
-          version:
-            1
-        }
+          version: 1,
+        },
       },
       {
-        returnDocument:
-          "after",
+        returnDocument: "after",
 
-        runValidators:
-          true
-      }
+        runValidators: true,
+      },
     ).lean();
   }
 
@@ -163,8 +112,7 @@ export class RfpRepository {
     context: TenantContext,
     rfpId: string,
     runId: string,
-    proposedRequirements:
-      RequirementAnalysisOutput
+    proposedRequirements: RequirementAnalysisOutput,
   ) {
     if (!Types.ObjectId.isValid(rfpId)) {
       return null;
@@ -172,48 +120,39 @@ export class RfpRepository {
 
     return RfpModel.findOneAndUpdate(
       {
-        _id:
-          rfpId,
+        _id: rfpId,
 
-        tenantId:
-          context.tenantId,
+        tenantId: context.tenantId,
 
-        status:
-          "ANALYZING_REQUIREMENTS",
+        status: "ANALYZING_REQUIREMENTS",
 
-        requirementAnalysisRunId:
-          runId
+        requirementAnalysisRunId: runId,
       },
       {
         $set: {
           proposedRequirements,
 
-          status:
-            "REQUIREMENTS_REVIEW",
+          status: "REQUIREMENTS_REVIEW",
 
-          updatedBy:
-            context.userId
+          updatedBy: context.userId,
         },
 
         $inc: {
-          version:
-            1
-        }
+          version: 1,
+        },
       },
       {
-        returnDocument:
-          "after",
+        returnDocument: "after",
 
-        runValidators:
-          true
-      }
+        runValidators: true,
+      },
     ).lean();
   }
 
   async restoreDraftAfterAnalysisFailure(
     context: TenantContext,
     rfpId: string,
-    runId: string
+    runId: string,
   ) {
     if (!Types.ObjectId.isValid(rfpId)) {
       return null;
@@ -221,129 +160,95 @@ export class RfpRepository {
 
     return RfpModel.findOneAndUpdate(
       {
-        _id:
-          rfpId,
+        _id: rfpId,
 
-        tenantId:
-          context.tenantId,
+        tenantId: context.tenantId,
 
-        status:
-          "ANALYZING_REQUIREMENTS",
+        status: "ANALYZING_REQUIREMENTS",
 
-        requirementAnalysisRunId:
-          runId
+        requirementAnalysisRunId: runId,
       },
       {
         $set: {
-          status:
-            "DRAFT",
+          status: "DRAFT",
 
-          updatedBy:
-            context.userId
+          updatedBy: context.userId,
         },
 
         $unset: {
-          requirementAnalysisRunId:
-            ""
+          requirementAnalysisRunId: "",
         },
 
         $inc: {
-          version:
-            1
-        }
+          version: 1,
+        },
       },
       {
-        returnDocument:
-          "after",
+        returnDocument: "after",
 
-        runValidators:
-          true
-      }
+        runValidators: true,
+      },
     ).lean();
   }
 
   async confirmRequirements(
     context: TenantContext,
     rfpId: string,
-    input: ConfirmRequirementsInput
+    input: ConfirmRequirementsInput,
   ) {
     if (!Types.ObjectId.isValid(rfpId)) {
       return null;
     }
 
     const confirmedRequirements = {
-      summary:
-        input.requirements.summary,
+      summary: input.requirements.summary,
 
-      technical:
-        input.requirements.technical.map(
-          (item) => ({
-            ...item,
-            source:
-              "USER_CONFIRMED" as const
-          })
-        ),
+      technical: input.requirements.technical.map((item) => ({
+        ...item,
+        source: "USER_CONFIRMED" as const,
+      })),
 
-      commercial:
-        input.requirements.commercial.map(
-          (item) => ({
-            ...item,
-            source:
-              "USER_CONFIRMED" as const
-          })
-        ),
+      commercial: input.requirements.commercial.map((item) => ({
+        ...item,
+        source: "USER_CONFIRMED" as const,
+      })),
 
-      mandatory:
-        input.requirements.mandatory.map(
-          (item) => ({
-            ...item,
-            source:
-              "USER_CONFIRMED" as const
-          })
-        ),
+      mandatory: input.requirements.mandatory.map((item) => ({
+        ...item,
+        source: "USER_CONFIRMED" as const,
+      })),
 
-      assumptions:
-        input.requirements.assumptions,
+      assumptions: input.requirements.assumptions,
 
-      openQuestions:
-        input.requirements.openQuestions
+      openQuestions: input.requirements.openQuestions,
     };
 
     return RfpModel.findOneAndUpdate(
       {
-        _id:
-          rfpId,
+        _id: rfpId,
 
-        tenantId:
-          context.tenantId,
+        tenantId: context.tenantId,
 
-        status:
-          "REQUIREMENTS_REVIEW",
+        status: "REQUIREMENTS_REVIEW",
 
-        version:
-          input.expectedVersion
+        version: input.expectedVersion,
       },
       {
         $set: {
-          requirements:
-            confirmedRequirements,
+          requirements: confirmedRequirements,
 
-          updatedBy:
-            context.userId
+          updatedBy: context.userId,
         },
 
         $inc: {
-          version:
-            1
-        }
+          version: 1,
+        },
       },
       {
-        returnDocument:
-          "after",
+        returnDocument: "after",
 
-        runValidators:
-          true
-      }
+        runValidators: true,
+      },
     ).lean();
   }
 }

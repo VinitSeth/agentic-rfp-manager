@@ -7,17 +7,14 @@ export async function connectDatabase(): Promise<void> {
     throw new Error("MONGODB_URI is not configured");
   }
 
-  mongoose.set(
-    "autoIndex",
-    process.env.MONGODB_AUTO_INDEX !== "false"
-  );
+  mongoose.set("autoIndex", process.env.MONGODB_AUTO_INDEX !== "false");
 
   await mongoose.connect(mongoUri, {
-    serverSelectionTimeoutMS: 10_000
+    serverSelectionTimeoutMS: 10_000,
   });
 
   console.log(
-    `[database] Connected to MongoDB database: ${mongoose.connection.name}`
+    `[database] Connected to MongoDB database: ${mongoose.connection.name}`,
   );
 }
 

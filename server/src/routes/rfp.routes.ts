@@ -1,52 +1,18 @@
-import {
-  randomUUID
-} from "node:crypto";
-
-import {
-  Router
-} from "express";
-
-import {
-  authenticateJwt
-} from "../middleware/auth.middleware.js";
-
-import {
-  resolveTenantContext
-} from "../middleware/tenant-context.middleware.js";
-
-import {
-  requirePermission
-} from "../middleware/permission.middleware.js";
-
-import {
-  validateBody
-} from "../middleware/validate.middleware.js";
-
-import {
-  AgentRunModel
-} from "../models/agent-run.model.js";
-
-import {
-  RfpRepository
-} from "../repositories/rfp.repository.js";
-
-import {
-  executeRequirementAnalysisAgent
-} from "../agents/requirement-analysis.agent.js";
-
-import {
-  confirmRequirementsSchema,
-  createRfpSchema
-} from "../validators/rfp.validators.js";
-
-import {
-  getRouteParameter
-} from "../utils/request.utils.js";
+import { randomUUID } from "node:crypto";
+import { Router } from "express";
+import { authenticateJwt } from "../middleware/auth.middleware.js";
+import { resolveTenantContext } from "../middleware/tenant-context.middleware.js";
+import { requirePermission } from "../middleware/permission.middleware.js";
+import { validateBody } from "../middleware/validate.middleware.js";
+import { AgentRunModel } from "../models/agent-run.model.js";
+import { RfpRepository } from "../repositories/rfp.repository.js";
+import { executeRequirementAnalysisAgent } from "../agents/requirement-analysis.agent.js";
+import { confirmRequirementsSchema, createRfpSchema } from "../validators/rfp.validators.js";
+import { getRouteParameter } from "../utils/request.utils.js";
 
 const router = Router();
 
-const rfpRepository =
-  new RfpRepository();
+const rfpRepository = new RfpRepository();
 
 /*
  * Every RFP endpoint requires:
@@ -57,10 +23,7 @@ const rfpRepository =
  *
  * Individual routes additionally check permissions.
  */
-router.use(
-  authenticateJwt,
-  resolveTenantContext
-);
+router.use(authenticateJwt, resolveTenantContext);
 
 /*
  * GET /api/rfps
@@ -74,19 +37,18 @@ router.get(
 
   async (req, res, next) => {
     try {
-      const rfps =
-        await rfpRepository.list({
-          tenantId: req.tenant!.id,
-          userId: req.tenant!.userId
-        });
+      const rfps = await rfpRepository.list({
+        tenantId: req.tenant!.id,
+        userId: req.tenant!.userId,
+      });
 
       res.status(200).json({
-        items: rfps
+        items: rfps,
       });
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /*
@@ -103,40 +65,33 @@ router.post(
 
   async (req, res, next) => {
     try {
-      const rfp =
-        await rfpRepository.createDraft(
-          {
-            tenantId: req.tenant!.id,
-            userId: req.tenant!.userId
-          },
-          {
-            rfpNumber:
-              req.body.rfpNumber,
+      const rfp = await rfpRepository.createDraft(
+        {
+          tenantId: req.tenant!.id,
+          userId: req.tenant!.userId,
+        },
+        {
+          rfpNumber: req.body.rfpNumber,
 
-            title:
-              req.body.title,
+          title: req.body.title,
 
-            category:
-              req.body.category,
+          category: req.body.category,
 
-            requirementBrief:
-              req.body.requirementBrief,
+          requirementBrief: req.body.requirementBrief,
 
-            budget:
-              req.body.budget
-          }
-        );
+          budget: req.body.budget,
+        },
+      );
 
       res.status(201).json({
-        message:
-          "RFP draft created successfully",
+        message: "RFP draft created successfully",
 
-        rfp
+        rfp,
       });
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /*
@@ -152,29 +107,24 @@ router.get(
 
   async (req, res, next) => {
     try {
-      const rfpId =
-        getRouteParameter(req, "rfpId");
+      const rfpId = getRouteParameter(req, "rfpId");
 
       if (!rfpId) {
         res.status(400).json({
-          message:
-            "A valid RFP ID is required"
+          message: "A valid RFP ID is required",
         });
 
         return;
       }
 
-      const rfp =
-        await rfpRepository.findById(
-          {
-            tenantId:
-              req.tenant!.id,
+      const rfp = await rfpRepository.findById(
+        {
+          tenantId: req.tenant!.id,
 
-            userId:
-              req.tenant!.userId
-          },
-          rfpId
-        );
+          userId: req.tenant!.userId,
+        },
+        rfpId,
+      );
 
       if (!rfp) {
         /*
@@ -186,20 +136,19 @@ router.get(
          * resource existence.
          */
         res.status(404).json({
-          message:
-            "RFP not found"
+          message: "RFP not found",
         });
 
         return;
       }
 
       res.status(200).json({
-        rfp
+        rfp,
       });
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /*
@@ -229,36 +178,27 @@ router.post(
     const runId = randomUUID();
 
     try {
-      const rfpId =
-        getRouteParameter(req, "rfpId");
+      const rfpId = getRouteParameter(req, "rfpId");
 
       if (!rfpId) {
         res.status(400).json({
-          message:
-            "A valid RFP ID is required"
+          message: "A valid RFP ID is required",
         });
 
         return;
       }
 
       const context = {
-        tenantId:
-          req.tenant!.id,
+        tenantId: req.tenant!.id,
 
-        userId:
-          req.tenant!.userId
+        userId: req.tenant!.userId,
       };
 
-      const rfp =
-        await rfpRepository.findById(
-          context,
-          rfpId
-        );
+      const rfp = await rfpRepository.findById(context, rfpId);
 
       if (!rfp) {
         res.status(404).json({
-          message:
-            "RFP not found"
+          message: "RFP not found",
         });
 
         return;
@@ -269,8 +209,7 @@ router.post(
           message:
             "Requirement analysis can only start when the RFP is in DRAFT status",
 
-          currentStatus:
-            rfp.status
+          currentStatus: rfp.status,
         });
 
         return;
@@ -279,131 +218,99 @@ router.post(
       const startedAt = new Date();
 
       await AgentRunModel.create({
-        tenantId:
-          req.tenant!.id,
+        tenantId: req.tenant!.id,
 
-        rfpId:
-          rfp._id,
+        rfpId: rfp._id,
 
         runId,
 
-        agentName:
-          "requirement-analysis",
+        agentName: "requirement-analysis",
 
-        agentVersion:
-          "1.0.0",
+        agentVersion: "1.0.0",
 
-        status:
-          "RUNNING",
+        status: "RUNNING",
 
-        verificationStatus:
-          "NOT_STARTED",
+        verificationStatus: "NOT_STARTED",
 
-        attemptCount:
-          1,
+        attemptCount: 1,
 
-        maximumAttempts:
-          2,
+        maximumAttempts: 2,
 
-        promptVersion:
-          "1.0",
+        promptVersion: "1.0",
 
-        modelAdapter:
-          "MOCK",
+        modelAdapter: "MOCK",
 
-        findings:
-          [],
+        findings: [],
 
         startedAt,
 
-        createdBy:
-          req.tenant!.userId
+        createdBy: req.tenant!.userId,
       });
 
-      const analyzingRfp =
-        await rfpRepository
-          .startRequirementAnalysis(
-            context,
-            rfpId,
-            runId
-          );
+      const analyzingRfp = await rfpRepository.startRequirementAnalysis(
+        context,
+        rfpId,
+        runId,
+      );
 
       if (!analyzingRfp) {
         await AgentRunModel.updateOne(
           {
-            tenantId:
-              req.tenant!.id,
+            tenantId: req.tenant!.id,
 
-            runId
+            runId,
           },
           {
             $set: {
-              status:
-                "CANCELLED",
+              status: "CANCELLED",
 
-              errorCode:
-                "RFP_STATE_CONFLICT",
+              errorCode: "RFP_STATE_CONFLICT",
 
-              errorMessage:
-                "RFP state changed before analysis started",
+              errorMessage: "RFP state changed before analysis started",
 
-              completedAt:
-                new Date()
-            }
-          }
+              completedAt: new Date(),
+            },
+          },
         );
 
         res.status(409).json({
-          message:
-            "RFP status changed before requirement analysis could start"
+          message: "RFP status changed before requirement analysis could start",
         });
 
         return;
       }
 
-      const agentResult =
-        await executeRequirementAnalysisAgent({
-          requirementBrief:
-            analyzingRfp.requirementBrief
-        });
+      const agentResult = await executeRequirementAnalysisAgent({
+        requirementBrief: analyzingRfp.requirementBrief,
+      });
 
-      if (
-        agentResult.status !== "SUCCEEDED" ||
-        !agentResult.output
-      ) {
+      if (agentResult.status !== "SUCCEEDED" || !agentResult.output) {
         const completedAt = new Date();
 
         await AgentRunModel.updateOne(
           {
-            tenantId:
-              req.tenant!.id,
+            tenantId: req.tenant!.id,
 
-            runId
+            runId,
           },
           {
             $set: {
-              status:
-                "FAILED",
+              status: "FAILED",
 
-              verificationStatus:
-                "SCHEMA_FAILED",
+              verificationStatus: "SCHEMA_FAILED",
 
-              findings:
-                agentResult.findings,
+              findings: agentResult.findings,
 
-              errorCode:
-                "REQUIREMENT_ANALYSIS_VALIDATION_FAILED",
+              errorCode: "REQUIREMENT_ANALYSIS_VALIDATION_FAILED",
 
               errorMessage:
                 "Requirement Analysis Agent output failed validation",
 
               completedAt,
 
-              durationMs:
-                completedAt.getTime() -
-                startedAt.getTime()
-            }
-          }
+              durationMs: completedAt.getTime() - startedAt.getTime(),
+            },
+          },
         );
 
         /*
@@ -411,21 +318,18 @@ router.post(
          * The original requirementBrief remains
          * unchanged.
          */
-        await rfpRepository
-          .restoreDraftAfterAnalysisFailure(
-            context,
-            rfpId,
-            runId
-          );
+        await rfpRepository.restoreDraftAfterAnalysisFailure(
+          context,
+          rfpId,
+          runId,
+        );
 
         res.status(422).json({
-          message:
-            "Requirement analysis output failed validation",
+          message: "Requirement analysis output failed validation",
 
           runId,
 
-          findings:
-            agentResult.findings
+          findings: agentResult.findings,
         });
 
         return;
@@ -433,51 +337,43 @@ router.post(
 
       const completedAt = new Date();
 
-      const reviewedRfp =
-        await rfpRepository
-          .saveProposedRequirements(
-            context,
-            rfpId,
-            runId,
-            agentResult.output
-          );
+      const reviewedRfp = await rfpRepository.saveProposedRequirements(
+        context,
+        rfpId,
+        runId,
+        agentResult.output,
+      );
 
       if (!reviewedRfp) {
         await AgentRunModel.updateOne(
           {
-            tenantId:
-              req.tenant!.id,
+            tenantId: req.tenant!.id,
 
-            runId
+            runId,
           },
           {
             $set: {
-              status:
-                "FAILED",
+              status: "FAILED",
 
-              verificationStatus:
-                "RULES_FAILED",
+              verificationStatus: "RULES_FAILED",
 
-              errorCode:
-                "RFP_UPDATE_CONFLICT",
+              errorCode: "RFP_UPDATE_CONFLICT",
 
               errorMessage:
                 "The RFP could not accept the agent output because its state changed",
 
               completedAt,
 
-              durationMs:
-                completedAt.getTime() -
-                startedAt.getTime()
-            }
-          }
+              durationMs: completedAt.getTime() - startedAt.getTime(),
+            },
+          },
         );
 
         res.status(409).json({
           message:
             "RFP state changed before the proposed requirements could be saved",
 
-          runId
+          runId,
         });
 
         return;
@@ -485,47 +381,37 @@ router.post(
 
       await AgentRunModel.updateOne(
         {
-          tenantId:
-            req.tenant!.id,
+          tenantId: req.tenant!.id,
 
-          runId
+          runId,
         },
         {
           $set: {
-            status:
-              "SUCCEEDED",
+            status: "SUCCEEDED",
 
-            verificationStatus:
-              "SCHEMA_VALID",
+            verificationStatus: "SCHEMA_VALID",
 
-            output:
-              agentResult.output,
+            output: agentResult.output,
 
-            findings:
-              agentResult.findings,
+            findings: agentResult.findings,
 
             completedAt,
 
-            durationMs:
-              completedAt.getTime() -
-              startedAt.getTime()
-          }
-        }
+            durationMs: completedAt.getTime() - startedAt.getTime(),
+          },
+        },
       );
 
       res.status(200).json({
-        message:
-          "Requirement analysis completed successfully",
+        message: "Requirement analysis completed successfully",
 
         runId,
 
-        agentRunStatus:
-          "SUCCEEDED",
+        agentRunStatus: "SUCCEEDED",
 
-        verificationStatus:
-          "SCHEMA_VALID",
+        verificationStatus: "SCHEMA_VALID",
 
-        rfp: reviewedRfp
+        rfp: reviewedRfp,
       });
     } catch (error) {
       const completedAt = new Date();
@@ -538,27 +424,24 @@ router.post(
        */
       await AgentRunModel.updateOne(
         {
-          tenantId:
-            req.tenant?.id,
+          tenantId: req.tenant?.id,
 
-          runId
+          runId,
         },
         {
           $set: {
-            status:
-              "FAILED",
+            status: "FAILED",
 
-            errorCode:
-              "REQUIREMENT_ANALYSIS_UNEXPECTED_ERROR",
+            errorCode: "REQUIREMENT_ANALYSIS_UNEXPECTED_ERROR",
 
             errorMessage:
               error instanceof Error
                 ? error.message
                 : "Unexpected requirement analysis error",
 
-            completedAt
-          }
-        }
+            completedAt,
+          },
+        },
       ).catch(() => {
         /*
          * Do not replace the original error if error
@@ -568,7 +451,7 @@ router.post(
 
       next(error);
     }
-  }
+  },
 );
 
 /*
@@ -585,30 +468,24 @@ router.put(
 
   requirePermission("rfp:review"),
 
-  validateBody(
-    confirmRequirementsSchema
-  ),
+  validateBody(confirmRequirementsSchema),
 
   async (req, res, next) => {
     try {
-      const rfpId =
-        getRouteParameter(req, "rfpId");
+      const rfpId = getRouteParameter(req, "rfpId");
 
       if (!rfpId) {
         res.status(400).json({
-          message:
-            "A valid RFP ID is required"
+          message: "A valid RFP ID is required",
         });
 
         return;
       }
 
       const context = {
-        tenantId:
-          req.tenant!.id,
+        tenantId: req.tenant!.id,
 
-        userId:
-          req.tenant!.userId
+        userId: req.tenant!.userId,
       };
 
       /*
@@ -617,79 +494,61 @@ router.put(
        * more clearly without exposing another
        * tenant's resource.
        */
-      const existingRfp =
-        await rfpRepository.findById(
-          context,
-          rfpId
-        );
+      const existingRfp = await rfpRepository.findById(context, rfpId);
 
       if (!existingRfp) {
         res.status(404).json({
-          message:
-            "RFP not found"
+          message: "RFP not found",
         });
 
         return;
       }
 
-      if (
-        existingRfp.status !==
-        "REQUIREMENTS_REVIEW"
-      ) {
+      if (existingRfp.status !== "REQUIREMENTS_REVIEW") {
         res.status(409).json({
           message:
             "Requirements can only be confirmed while the RFP is in REQUIREMENTS_REVIEW",
 
-          currentStatus:
-            existingRfp.status
+          currentStatus: existingRfp.status,
         });
 
         return;
       }
 
-      if (
-        existingRfp.version !==
-        req.body.expectedVersion
-      ) {
+      if (existingRfp.version !== req.body.expectedVersion) {
         res.status(409).json({
-          message:
-            "The RFP has changed since it was loaded",
+          message: "The RFP has changed since it was loaded",
 
-          currentVersion:
-            existingRfp.version
+          currentVersion: existingRfp.version,
         });
 
         return;
       }
 
-      const updatedRfp =
-        await rfpRepository
-          .confirmRequirements(
-            context,
-            rfpId,
-            req.body
-          );
+      const updatedRfp = await rfpRepository.confirmRequirements(
+        context,
+        rfpId,
+        req.body,
+      );
 
       if (!updatedRfp) {
         res.status(409).json({
           message:
-            "The RFP could not be updated because its state or version changed"
+            "The RFP could not be updated because its state or version changed",
         });
 
         return;
       }
 
       res.status(200).json({
-        message:
-          "Requirements saved successfully",
+        message: "Requirements saved successfully",
 
-        rfp:
-          updatedRfp
+        rfp: updatedRfp,
       });
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export default router;
