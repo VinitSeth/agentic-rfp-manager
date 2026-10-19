@@ -1,8 +1,5 @@
 import { Schema, model } from "mongoose";
-import {
-  USER_STATUSES,
-  type UserStatus
-} from "./constants.js";
+import { USER_STATUSES, type UserStatus } from "./constants.js";
 
 export interface User {
   displayName: string;
@@ -18,31 +15,31 @@ const userSchema = new Schema<User>(
       required: true,
       trim: true,
       minlength: 2,
-      maxlength: 120
+      maxlength: 120,
     },
     email: {
       type: String,
       trim: true,
       lowercase: true,
-      maxlength: 254
+      maxlength: 254,
     },
     identityProviderId: {
       type: String,
       trim: true,
-      maxlength: 256
+      maxlength: 256,
     },
     status: {
       type: String,
       enum: USER_STATUSES,
       required: true,
-      default: "ACTIVE"
-    }
+      default: "ACTIVE",
+    },
   },
   {
     timestamps: true,
     collection: "users",
-    strict: "throw"
-  }
+    strict: "throw",
+  },
 );
 
 userSchema.index(
@@ -52,10 +49,10 @@ userSchema.index(
     name: "uq_users_identity_provider_id",
     partialFilterExpression: {
       identityProviderId: {
-        $type: "string"
-      }
-    }
-  }
+        $type: "string",
+      },
+    },
+  },
 );
 
 userSchema.index(
@@ -64,13 +61,10 @@ userSchema.index(
     name: "ix_users_email",
     partialFilterExpression: {
       email: {
-        $type: "string"
-      }
-    }
-  }
+        $type: "string",
+      },
+    },
+  },
 );
 
-export const UserModel = model<User>(
-  "User",
-  userSchema
-);
+export const UserModel = model<User>("User", userSchema);

@@ -1,31 +1,11 @@
 import "dotenv/config";
-
 import mongoose from "mongoose";
-
-import {
-  connectDatabase,
-  disconnectDatabase
-} from "../config/database.js";
-
-import {
-  TenantModel
-} from "../models/tenant.model.js";
-
-import {
-  UserModel
-} from "../models/user.model.js";
-
-import {
-  TenantMembershipModel
-} from "../models/tenant-membership.model.js";
-
-import {
-  RfpModel
-} from "../models/rfp.model.js";
-
-import {
-  AgentRunModel
-} from "../models/agent-run.model.js";
+import { connectDatabase, disconnectDatabase } from "../config/database.js";
+import { TenantModel } from "../models/tenant.model.js";
+import { UserModel } from "../models/user.model.js";
+import { TenantMembershipModel } from "../models/tenant-membership.model.js";
+import { RfpModel } from "../models/rfp.model.js";
+import { AgentRunModel } from "../models/agent-run.model.js";
 
 async function initializeModels(): Promise<void> {
   /*
@@ -37,7 +17,7 @@ async function initializeModels(): Promise<void> {
     UserModel.init(),
     TenantMembershipModel.init(),
     RfpModel.init(),
-    AgentRunModel.init()
+    AgentRunModel.init(),
   ]);
 }
 
@@ -48,13 +28,10 @@ async function clearPocData(): Promise<void> {
   await Promise.all([
     AgentRunModel.deleteMany({}),
     RfpModel.deleteMany({}),
-    TenantMembershipModel.deleteMany({})
+    TenantMembershipModel.deleteMany({}),
   ]);
 
-  await Promise.all([
-    UserModel.deleteMany({}),
-    TenantModel.deleteMany({})
-  ]);
+  await Promise.all([UserModel.deleteMany({}), TenantModel.deleteMany({})]);
 }
 
 async function seed(): Promise<void> {
@@ -63,261 +40,179 @@ async function seed(): Promise<void> {
   await initializeModels();
   await clearPocData();
 
-  const [
-    northstarTenant,
-    bluePeakTenant
-  ] = await TenantModel.create([
+  const [northstarTenant, bluePeakTenant] = await TenantModel.create([
     {
-      name:
-        "Northstar Manufacturing",
+      name: "Northstar Manufacturing",
 
-      slug:
-        "northstar",
+      slug: "northstar",
 
-      status:
-        "ACTIVE",
+      status: "ACTIVE",
 
       settings: {
-        currency:
-          "INR",
+        currency: "INR",
 
-        timezone:
-          "Asia/Kolkata"
-      }
+        timezone: "Asia/Kolkata",
+      },
     },
     {
-      name:
-        "BluePeak Telecom",
+      name: "BluePeak Telecom",
 
-      slug:
-        "bluepeak",
+      slug: "bluepeak",
 
-      status:
-        "ACTIVE",
+      status: "ACTIVE",
 
       settings: {
-        currency:
-          "INR",
+        currency: "INR",
 
-        timezone:
-          "Asia/Kolkata"
-      }
-    }
+        timezone: "Asia/Kolkata",
+      },
+    },
   ]);
 
-  const procurementUser =
-    await UserModel.create({
-      displayName:
-        "Demo Procurement User",
+  const procurementUser = await UserModel.create({
+    displayName: "Demo Procurement User",
 
-      email:
-        "demo-procurement@example.com",
+    email: "demo-procurement@example.com",
 
-      identityProviderId:
-        "demo-procurement-user",
+    identityProviderId: "demo-procurement-user",
 
-      status:
-        "ACTIVE"
-    });
+    status: "ACTIVE",
+  });
 
-  const auditorUser =
-    await UserModel.create({
-      displayName:
-        "Demo Auditor User",
+  const auditorUser = await UserModel.create({
+    displayName: "Demo Auditor User",
 
-      email:
-        "demo-auditor@example.com",
+    email: "demo-auditor@example.com",
 
-      identityProviderId:
-        "demo-auditor-user",
+    identityProviderId: "demo-auditor-user",
 
-      status:
-        "ACTIVE"
-    });
+    status: "ACTIVE",
+  });
 
   await TenantMembershipModel.create([
     {
-      tenantId:
-        northstarTenant._id,
+      tenantId: northstarTenant._id,
 
-      userId:
-        procurementUser._id,
+      userId: procurementUser._id,
 
-      role:
-        "PROCUREMENT_MANAGER",
+      role: "PROCUREMENT_MANAGER",
 
-      permissions:
-        [],
+      permissions: [],
 
-      status:
-        "ACTIVE"
+      status: "ACTIVE",
     },
     {
-      tenantId:
-        bluePeakTenant._id,
+      tenantId: bluePeakTenant._id,
 
-      userId:
-        procurementUser._id,
+      userId: procurementUser._id,
 
-      role:
-        "PROCUREMENT_MANAGER",
+      role: "PROCUREMENT_MANAGER",
 
-      permissions:
-        [],
+      permissions: [],
 
-      status:
-        "ACTIVE"
+      status: "ACTIVE",
     },
     {
-      tenantId:
-        northstarTenant._id,
+      tenantId: northstarTenant._id,
 
-      userId:
-        auditorUser._id,
+      userId: auditorUser._id,
 
-      role:
-        "AUDITOR",
+      role: "AUDITOR",
 
-      permissions:
-        [],
+      permissions: [],
 
-      status:
-        "ACTIVE"
-    }
+      status: "ACTIVE",
+    },
   ]);
 
-  const [
-    northstarRfp,
-    bluePeakRfp
-  ] = await RfpModel.create([
+  const [northstarRfp, bluePeakRfp] = await RfpModel.create([
     {
-      tenantId:
-        northstarTenant._id,
+      tenantId: northstarTenant._id,
 
-      rfpNumber:
-        "RFP-2026-001",
+      rfpNumber: "RFP-2026-001",
 
-      title:
-        "Network Equipment Procurement",
+      title: "Network Equipment Procurement",
 
-      category:
-        "IT_INFRASTRUCTURE",
+      category: "IT_INFRASTRUCTURE",
 
       requirementBrief:
         "Procure network equipment and installation services for three office locations, including switches, routers, implementation and one year of technical support.",
 
       budget: {
-        amount:
-          5_000_000,
+        amount: 5_000_000,
 
-        currency:
-          "INR"
+        currency: "INR",
       },
 
-      submissionDeadline:
-        null,
+      submissionDeadline: null,
 
-      status:
-        "DRAFT",
+      status: "DRAFT",
 
-      requirementAnalysisRunId:
-        null,
+      requirementAnalysisRunId: null,
 
-      createdBy:
-        procurementUser._id,
+      createdBy: procurementUser._id,
 
-      updatedBy:
-        procurementUser._id,
+      updatedBy: procurementUser._id,
 
-      version:
-        1
+      version: 1,
     },
     {
-      tenantId:
-        bluePeakTenant._id,
+      tenantId: bluePeakTenant._id,
 
       /*
        * The same RFP number is intentional.
        * Uniqueness is tenant-scoped.
        */
-      rfpNumber:
-        "RFP-2026-001",
+      rfpNumber: "RFP-2026-001",
 
-      title:
-        "Telecom Monitoring Platform",
+      title: "Telecom Monitoring Platform",
 
-      category:
-        "TELECOM_SOFTWARE",
+      category: "TELECOM_SOFTWARE",
 
       requirementBrief:
         "Acquire a telecom network monitoring platform with operational dashboards, configurable alerts, integration support and implementation services.",
 
       budget: {
-        amount:
-          8_000_000,
+        amount: 8_000_000,
 
-        currency:
-          "INR"
+        currency: "INR",
       },
 
-      submissionDeadline:
-        null,
+      submissionDeadline: null,
 
-      status:
-        "DRAFT",
+      status: "DRAFT",
 
-      requirementAnalysisRunId:
-        null,
+      requirementAnalysisRunId: null,
 
-      createdBy:
-        procurementUser._id,
+      createdBy: procurementUser._id,
 
-      updatedBy:
-        procurementUser._id,
+      updatedBy: procurementUser._id,
 
-      version:
-        1
-    }
+      version: 1,
+    },
   ]);
 
-  console.info(
-    "[seed] POC data created successfully"
-  );
+  console.info("[seed] POC data created successfully");
 
-  console.info(
-    `[seed] Northstar tenant ID: ${northstarTenant._id.toString()}`
-  );
+  console.info(`[seed] Northstar tenant ID: ${northstarTenant._id.toString()}`);
 
-  console.info(
-    `[seed] BluePeak tenant ID: ${bluePeakTenant._id.toString()}`
-  );
+  console.info(`[seed] BluePeak tenant ID: ${bluePeakTenant._id.toString()}`);
 
-  console.info(
-    `[seed] Procurement user ID: ${procurementUser._id.toString()}`
-  );
+  console.info(`[seed] Procurement user ID: ${procurementUser._id.toString()}`);
 
-  console.info(
-    `[seed] Northstar RFP ID: ${northstarRfp._id.toString()}`
-  );
+  console.info(`[seed] Northstar RFP ID: ${northstarRfp._id.toString()}`);
 
-  console.info(
-    `[seed] BluePeak RFP ID: ${bluePeakRfp._id.toString()}`
-  );
+  console.info(`[seed] BluePeak RFP ID: ${bluePeakRfp._id.toString()}`);
 }
 
 seed()
   .catch((error: unknown) => {
-    console.error(
-      "[seed] Failed to create POC data",
-      error
-    );
+    console.error("[seed] Failed to create POC data", error);
 
     process.exitCode = 1;
   })
   .finally(async () => {
-    if (
-      mongoose.connection.readyState !== 0
-    ) {
+    if (mongoose.connection.readyState !== 0) {
       await disconnectDatabase();
     }
   });
