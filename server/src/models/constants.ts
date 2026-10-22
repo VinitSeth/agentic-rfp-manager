@@ -49,14 +49,33 @@ export type AgentRunStatus = (typeof AGENT_RUN_STATUSES)[number];
 
 export const VERIFICATION_STATUSES = [
   "NOT_STARTED",
-  "SCHEMA_VALID",
-  "SCHEMA_FAILED",
+
+  /*
+   * The output matches the expected JSON structure.
+   * This is not a factual verification.
+   */
+  "STRUCTURE_VALID",
+  "STRUCTURE_INVALID",
+
+  /*
+   * Deterministic task-specific checks passed or failed.
+   */
   "RULES_VALID",
-  "RULES_FAILED",
+  "RULES_INVALID",
+
+  /*
+   * Relevant evidence references were verified.
+   * This becomes more important for proposal extraction.
+   */
   "EVIDENCE_VALID",
-  "EVIDENCE_FAILED",
+  "EVIDENCE_INVALID",
+
+  /*
+   * Human review remains required for consequential results.
+   */
   "HUMAN_REVIEW_REQUIRED",
-  "VERIFIED",
+  "HUMAN_CONFIRMED",
+  "REJECTED"
 ] as const;
 
 export type VerificationStatus = (typeof VERIFICATION_STATUSES)[number];
@@ -126,3 +145,23 @@ export const ACTIVITY_TYPES = [
   "RFP_AWARDED",
   "SYSTEM_EVENT",
 ] as const;
+
+export const AGENT_JOB_TYPES = [
+  "REQUIREMENT_ANALYSIS"
+] as const;
+
+export type AgentJobType =
+  (typeof AGENT_JOB_TYPES)[number];
+
+export const AGENT_JOB_STATUSES = [
+  "QUEUED",
+  "CLAIMED",
+  "RUNNING",
+  "RETRY_WAIT",
+  "SUCCEEDED",
+  "FAILED",
+  "DEAD_LETTER",
+  "CANCELLED"
+] as const;
+
+export type AgentJobStatus = (typeof AGENT_JOB_STATUSES)[number];
