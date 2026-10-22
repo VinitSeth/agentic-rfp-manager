@@ -72,3 +72,57 @@ export const REQUIREMENT_SOURCES = [
 ] as const;
 
 export type RequirementSource = (typeof REQUIREMENT_SOURCES)[number];
+
+export const VENDOR_STATUSES = [
+  "ACTIVE",
+  "INACTIVE",
+  "UNDER_REVIEW",
+  "BLOCKED",
+] as const;
+export const RFP_VENDOR_STATUSES = [
+  "SHORTLISTED",
+  "PENDING_APPROVAL",
+  "APPROVED_TO_INVITE",
+  "INVITED",
+  "DECLINED",
+  "RESPONDED",
+  "DISQUALIFIED",
+  "AWARDED",
+  "NOT_SELECTED",
+] as const;
+export const PROPOSAL_STATUSES = [
+  "UPLOADED",
+  "QUEUED",
+  "PROCESSING",
+  "NEEDS_REVIEW",
+  "VALIDATED",
+  "FAILED",
+  "REJECTED",
+] as const;
+export const EVALUATION_STATUSES = [
+  "DRAFT",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "APPROVED",
+] as const;
+export const RECOMMENDATION_STATUSES = [
+  "DRAFT",
+  "READY_FOR_REVIEW",
+  "APPROVED",
+  "REJECTED",
+] as const;
+export const ACTIVITY_TYPES = [
+  "RFP_CREATED",
+  "REQUIREMENTS_ANALYZED",
+  "REQUIREMENTS_UPDATED",
+  "RFP_APPROVED",
+  "VENDOR_SHORTLISTED",
+  "INVITATION_APPROVED",
+  "INVITATION_SENT",
+  "PROPOSAL_UPLOADED",
+  "PROPOSAL_PROCESSED",
+  "EVALUATION_COMPLETED",
+  "RECOMMENDATION_CREATED",
+  "RFP_AWARDED",
+  "SYSTEM_EVENT",
+] as const;
