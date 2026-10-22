@@ -1,5 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 import { ACTIVITY_TYPES } from "./constants.js";
+
 export interface ActivityEvent {
   tenantId: Types.ObjectId;
   actorId?: Types.ObjectId;
