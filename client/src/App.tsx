@@ -1,7 +1,5 @@
 import "./App.css";
-import { ActivityList, type ActivityItem } from "./components/ActivityList";
-import { LifecycleChart, type ChartItem } from "./components/LifecycleChart";
-import { MetricCard, type Metric } from "./components/MetricCard";
+import { RecommendationCard, type Recommendation } from "./components/RecommendationCard";
 import { RequirementReviewCard } from "./components/RequirementReviewCard";
 import { Sidebar, type SidebarItem } from "./components/Sidebar";
 import { StepProgress, type StepItem } from "./components/StepProgress";
@@ -18,27 +16,40 @@ const navItems: SidebarItem[] = [
   { label: "Administration", icon: "⚙" },
 ];
 
-const metrics: Metric[] = [
-  { label: "Active RFPs", value: "12", change: "20% vs last month", direction: "up", tone: "green" },
-  { label: "Proposals Received", value: "28", change: "40%", direction: "up", tone: "blue" },
-  { label: "Avg. Cycle Time", value: "18 days", change: "30%", direction: "down", tone: "red" },
-  { label: "Cost Savings (Est.)", value: "$1.2M", change: "25%", direction: "up", tone: "purple" },
-];
-
-const lifecycleData: ChartItem[] = [
-  { label: "Draft", value: 8, color: "blue" },
-  { label: "In Review", value: 5, color: "teal" },
-  { label: "Published", value: 12, color: "green" },
-  { label: "Proposals", value: 28, color: "cyan" },
-  { label: "Evaluation", value: 10, color: "purple" },
-  { label: "Awarded", value: 3, color: "gold" },
-];
-
-const activities: ActivityItem[] = [
-  { icon: "◉", tone: "blue", title: "New proposal received from TechNova", time: "2 minutes ago" },
-  { icon: "◌", tone: "gray", title: "RFP “Cloud Infrastructure” approved", time: "1 hour ago" },
-  { icon: "◍", tone: "teal", title: "Vendor shortlist generated for RFP-2025-18", time: "3 hours ago" },
-  { icon: "◔", tone: "purple", title: "Agent run completed: Proposal Extraction", time: "5 hours ago" },
+const recommendations: Recommendation[] = [
+  {
+    serialNumber: 1,
+    label: "Nexus Global Services",
+    score: 94,
+    points: [
+      "Strong 24/7 global service desk coverage",
+      "Comprehensive cybersecurity and compliance capabilities",
+      "Clear cloud modernization roadmap within budget",
+    ],
+    recommended: true,
+  },
+  {
+    serialNumber: 2,
+    label: "Summit Technology Partners",
+    score: 87,
+    points: [
+      "Experienced infrastructure support team",
+      "Competitive pricing and a flexible delivery model",
+      "Cloud migration plan needs more detailed milestones",
+    ],
+    recommended: false,
+  },
+  {
+    serialNumber: 3,
+    label: "Evergreen IT Solutions",
+    score: 81,
+    points: [
+      "Strong security monitoring and incident response",
+      "Good sustainability and optimization practices",
+      "Limited evidence of large-scale global delivery",
+    ],
+    recommended: false,
+  },
 ];
 
 const wizardSteps: StepItem[] = [
@@ -84,41 +95,20 @@ function HomePage() {
           <section className="hero-row">
             <div className="welcome-copy">
               <h1>
-                Good morning, Priya <span className="wave">👋</span>
+                AI Recommendations
               </h1>
-              <p>Turn requirements into the right partnerships with AI agents.</p>
+              <p>Based on evaluation criteria and proposal analysis, here are the recommended vendors.</p>
             </div>
 
-            <Link to="/rfps" type="button" className="primary-button">
-              <span>＋</span> Create New RFP
+            <Link to="/procurement-analytics" type="button" className="primary-button-outline">
+              View detailed report
             </Link>
           </section>
 
-          <section className="metrics-grid" aria-label="RFP summary metrics">
-            {metrics.map((metric) => (
-              <MetricCard key={metric.label} metric={metric} />
+          <section className="w-full flex justify-between gap-5" aria-label="RFP summary metrics">
+            {recommendations.map((recommendation) => (
+              <RecommendationCard key={recommendation.label} recommendation={recommendation} />
             ))}
-          </section>
-
-          <section className="lower-grid">
-            <article className="panel chart-panel">
-              <div className="panel-header">
-                <h2>RFP Lifecycle Overview</h2>
-              </div>
-
-              <LifecycleChart items={lifecycleData} />
-            </article>
-
-            <aside className="panel activity-panel">
-              <div className="panel-header activity-header">
-                <h2>Recent Activity</h2>
-                <button type="button" className="link-button">
-                  View all
-                </button>
-              </div>
-
-              <ActivityList items={activities} />
-            </aside>
           </section>
         </div>
       </main>
