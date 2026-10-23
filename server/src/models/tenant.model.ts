@@ -1,8 +1,5 @@
 import { Schema, model } from "mongoose";
-import {
-  TENANT_STATUSES,
-  type TenantStatus
-} from "./constants.js";
+import { TENANT_STATUSES, type TenantStatus } from "./constants.js";
 
 export interface Tenant {
   name: string;
@@ -21,7 +18,7 @@ const tenantSchema = new Schema<Tenant>(
       required: true,
       trim: true,
       minlength: 2,
-      maxlength: 120
+      maxlength: 120,
     },
     slug: {
       type: String,
@@ -30,13 +27,13 @@ const tenantSchema = new Schema<Tenant>(
       lowercase: true,
       minlength: 2,
       maxlength: 60,
-      match: /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+      match: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
     },
     status: {
       type: String,
       enum: TENANT_STATUSES,
       default: "ACTIVE",
-      required: true
+      required: true,
     },
     settings: {
       currency: {
@@ -46,32 +43,29 @@ const tenantSchema = new Schema<Tenant>(
         uppercase: true,
         minlength: 3,
         maxlength: 3,
-        default: "INR"
+        default: "INR",
       },
       timezone: {
         type: String,
         required: true,
         trim: true,
-        default: "Asia/Kolkata"
-      }
-    }
+        default: "Asia/Kolkata",
+      },
+    },
   },
   {
     timestamps: true,
     collection: "tenants",
-    strict: "throw"
-  }
+    strict: "throw",
+  },
 );
 
 tenantSchema.index(
   { slug: 1 },
   {
     unique: true,
-    name: "uq_tenants_slug"
-  }
+    name: "uq_tenants_slug",
+  },
 );
 
-export const TenantModel = model<Tenant>(
-  "Tenant",
-  tenantSchema
-);
+export const TenantModel = model<Tenant>("Tenant", tenantSchema);
