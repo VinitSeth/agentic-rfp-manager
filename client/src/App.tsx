@@ -80,7 +80,7 @@ const criticalRequirements = [
   "Quarterly performance reporting and optimization review",
 ];
 
-function HomePage() {
+function AiRecommendationsPage() {
   return (
     <div className="dashboard-shell">
       <Sidebar items={navItems} />
