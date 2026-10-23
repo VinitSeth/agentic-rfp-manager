@@ -220,24 +220,7 @@
   font-weight: 500;
 }
 
-.primary-button-2 {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  border: none;
-  background: #bbdcff;
-  color: #007de3;
-  height: 50px;
-  padding: 0 24px;
-  border-radius: 14px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  box-shadow: 0 10px 20px rgba(31, 110, 204, 0.25);
-  cursor: pointer;
-}
-
-.primary-button- {
+.primary-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
