@@ -11,6 +11,8 @@ import { useState } from "react";
 import { ProposalTabs } from "./components/Tabs";
 import { proposalTabs } from "./data/proposals";
 import { DataTable } from "./components/DataTable";
+import { RecommendationCard, type Recommendation } from "./components/RecommendationCard";
+
 const navItems: SidebarItem[] = [
   { label: "Home", icon: "⌂", path: "/" },
   { label: "RFPs", icon: "▣", path: "/rfps" },
@@ -70,6 +72,45 @@ const criticalRequirements = [
   "Security compliance and vulnerability monitoring",
   "Cloud migration roadmap with milestones",
   "Quarterly performance reporting and optimization review",
+];
+
+const recommendations: Recommendation[] = [
+  {
+    serialNumber: 1,
+    label: "TechNova Solutions",
+    score: 94,
+    recommended: true,
+    points: [
+      "Strong cloud modernization background",
+      "Excellent 24/7 support coverage",
+      "High cybersecurity compliance maturity",
+      "Clear delivery roadmap with measurable milestones",
+    ],
+  },
+  {
+    serialNumber: 2,
+    label: "Global IT Partners",
+    score: 89,
+    recommended: false,
+    points: [
+      "Solid delivery model and pricing",
+      "Good enterprise support experience",
+      "Strong global workforce and scalability",
+      "Strong governance and cost transparency",
+    ],
+  },
+  {
+    serialNumber: 3,
+    label: "CloudMatrix",
+    score: 86,
+    recommended: false,
+    points: [
+      "Strong cloud transformation capabilities",
+      "Competitive commercial proposal",
+      "Good operational governance approach",
+      "Effective automation and service optimization strategy",
+    ],
+  },
 ];
 
 function HomePage() {
@@ -408,17 +449,52 @@ const [activeTab, setActiveTab] = useState("all");
     </div>
   );
 }
+
+function AiRecommendationsPage() {
+  return (
+    <div className="dashboard-shell">
+      <Sidebar items={navItems} />
+
+      <main className="main-panel">
+        <Topbar
+          tenantLabel="Acme Manufacturing (Tenant)"
+          user={{ initials: "P", name: "Priya Sharma", role: "Procurement Lead" }}
+        />
+
+        <div className="content-area">
+          <section className="hero-row">
+            <div className="welcome-copy">
+              <h1>
+                AI Recommendations
+              </h1>
+              <p>Based on evaluation criteria and proposal analysis, here are the recommended vendors.</p>
+            </div>
+
+            <Link to="/procurement-analytics" type="button" className="primary-button-outline">
+              View detailed report
+            </Link>
+          </section>
+
+          <section className="w-full flex justify-between gap-8" aria-label="RFP summary metrics">
+            {recommendations.map((recommendation) => (
+              <RecommendationCard key={recommendation.label} recommendation={recommendation} />
+            ))}
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}
+
 function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/rfps" element={<RfpPage />} />
       <Route path="/rfps/ai-extracted" element={<AiExtractedRequirementsPage />} />
+      <Route path="/proposals" element={<ProposalsPage />} />
+      <Route path="/ai-recommendations" element={<AiRecommendationsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
-      <Route
-    path="/proposals"
-    element={<ProposalsPage />}
-  />
     </Routes>
   );
 }
