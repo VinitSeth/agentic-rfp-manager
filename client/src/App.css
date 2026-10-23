@@ -237,6 +237,24 @@
   cursor: pointer;
 }
 
+.primary-button-2 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  background: #d0e6ff;
+  color: #007ade;
+  height: 50px;
+  padding: 0 24px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 10px 20px rgba(31, 110, 204, 0.25);
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
 .primary-button-outline {
   display: inline-flex;
   align-items: center;

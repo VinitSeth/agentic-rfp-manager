@@ -11,29 +11,6 @@ type TopbarProps = {
 
 export function Topbar({ tenantLabel, user }: TopbarProps) {
   return (
-<<<<<<< HEAD
-    <header className="topbar">
-      <div className="tenant-select" aria-label="Tenant selector">
-        <span>{tenantLabel}</span>
-        <span className="caret">⌄</span>
-      </div>
-
-      <div className="topbar-actions">
-        <button type="button" className="icon-button" aria-label="Search">
-          ⌕
-        </button>
-        <button type="button" className="icon-button" aria-label="Notifications">
-          🔔
-        </button>
-
-        <div className="user-badge" aria-label={`${user.name} avatar`}>
-          {user.initials}
-        </div>
-
-        <div className="user-meta">
-          <span className="user-name">{user.name}</span>
-          <span className="user-role">{user.role}</span>
-=======
     <header className="flex min-h-[80px] items-center justify-between gap-5 px-2 py-4">
       <div
         aria-label="Tenant selector"
@@ -58,7 +35,6 @@ export function Topbar({ tenantLabel, user }: TopbarProps) {
         <div className="flex min-w-[150px] flex-col items-start justify-center">
           <span className="text-[1.02rem] font-bold text-[#122e4e]">{user.name}</span>
           <span className="text-[0.82rem] text-[#5d7185]">{user.role}</span>
->>>>>>> main
         </div>
       </div>
     </header>

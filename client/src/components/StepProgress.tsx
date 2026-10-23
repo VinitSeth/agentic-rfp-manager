@@ -11,16 +11,6 @@ type StepProgressProps = {
 
 export function StepProgress({ steps }: StepProgressProps) {
   return (
-<<<<<<< HEAD
-    <div className="step-progress" aria-label="RFP creation steps">
-      {steps.map((step, index) => (
-        <div className="step-group" key={step.label}>
-          <div className={`step-node ${step.status}`}>
-            {step.status === "complete" ? "✓" : index + 1}
-          </div>
-          <span className={`step-label ${step.status}`}>{step.label}</span>
-          {index < steps.length - 1 && <span className="step-divider" aria-hidden="true" />}
-=======
     <div className="flex flex-wrap items-center gap-3 px-2 py-3" aria-label="RFP creation steps">
       {steps.map((step, index) => (
         <div key={step.label} className="flex items-center gap-2">
@@ -47,7 +37,6 @@ export function StepProgress({ steps }: StepProgressProps) {
             {step.label}
           </span>
           {index < steps.length - 1 && <span className="mx-1 h-px w-10 bg-slate-200" aria-hidden="true" />}
->>>>>>> main
         </div>
       ))}
     </div>

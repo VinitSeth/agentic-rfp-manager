@@ -14,7 +14,7 @@ type RecommendationCardProps = {
 
 export function RecommendationCard({ recommendation }: RecommendationCardProps) {
     return (
-        <article className={`flex flex-col bg-[rgba(255,255,255,0.72)] overflow-hidden border border-4 rounded-[18px] min-h-[150px] shadow-[0_5px_18px_rgba(29,42,68,0.04)] ${recommendation.recommended ? "border-green-500" : "border-[rgba(145,170,198,0.22)]"}`}>
+        <article className={`flex flex-col bg-[rgba(255,255,255,0.72)] overflow-hidden border border-4 rounded-[18px] min-h-[150px] shadow-[0_5px_18px_rgba(29,42,68,0.04)] ${recommendation.recommended ? "border-green-500" : "border-[rgba(145,170,198,0.22)]"} w-full`}>
             <div className={`p-3 text-lg ${recommendation.recommended ? "bg-green-500 text-white" : "text-blue-500"}`}>
                 #{recommendation.serialNumber} {recommendation.recommended ? "Recommended" : ""}
             </div>
