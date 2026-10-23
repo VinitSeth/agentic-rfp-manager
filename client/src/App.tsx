@@ -7,12 +7,15 @@ import { Sidebar, type SidebarItem } from "./components/Sidebar";
 import { StepProgress, type StepItem } from "./components/StepProgress";
 import { Topbar } from "./components/Topbar";
 import { Link, Navigate, Route, Routes } from "react-router-dom";
-
+import { useState } from "react";
+import { ProposalTabs } from "./components/Tabs";
+import { proposalTabs } from "./data/proposals";
+import { DataTable } from "./components/DataTable";
 const navItems: SidebarItem[] = [
   { label: "Home", icon: "⌂", path: "/" },
   { label: "RFPs", icon: "▣", path: "/rfps" },
   { label: "Vendors", icon: "◫" },
-  { label: "Proposals", icon: "◧" },
+  { label: "Proposals", icon: "◧",path:"/proposals" },
   { label: "Analytics", icon: "▤" },
   { label: "Agent Console", icon: "◌" },
   { label: "Administration", icon: "⚙" },
@@ -282,6 +285,129 @@ function AiExtractedRequirementsPage() {
   );
 }
 
+function ProposalsPage() {
+  const columns = [
+  { key: "vendor", label: "Vendor" },
+  { key: "fileName", label: "File Name" },
+  { key: "receivedOn", label: "Received On" },
+  { key: "status", label: "Status" },
+  { key: "actions", label: "Actions" },
+];
+
+  // const rows = [
+  //   {
+  //     id: "PROP-001",
+  //     vendor: "TechNova",
+  //     rfp: "RFP-2026-001",
+  //     amount: "$1.2M",
+  //     score: "92%",
+  //     status: "Qualified",
+  //   },
+  //   {
+  //     id: "PROP-002",
+  //     vendor: "Infosys",
+  //     rfp: "RFP-2026-001",
+  //     amount: "$950K",
+  //     score: "88%",
+  //     status: "Under Review",
+  //   },
+  //   {
+  //     id: "PROP-003",
+  //     vendor: "TCS",
+  //     rfp: "RFP-2026-002",
+  //     amount: "$1.5M",
+  //     score: "76%",
+  //     status: "Needs Review",
+  //   },
+  //   {
+  //     id: "PROP-004",
+  //     vendor: "Wipro",
+  //     rfp: "RFP-2026-003",
+  //     amount: "$1.1M",
+  //     score: "85%",
+  //     status: "Shortlisted",
+  //   },
+  // ];
+
+const rows = [
+  {
+    vendor: "TechNova Solutions",
+    fileName: "TechNova_Proposal.pdf",
+    receivedOn: "12 Oct 2026",
+    status: <span className="status success">Validated</span>,
+    actions: <button className="action-btn">View</button>,
+  },
+  {
+    vendor: "Global IT Partners",
+    fileName: "GITP_Proposal.pdf",
+    receivedOn: "11 Oct 2026",
+    status: <span className="status success">Validated</span>,
+    actions: <button className="action-btn">View</button>,
+  },
+  {
+    vendor: "NextGen Systems",
+    fileName: "NGS_Response.pdf",
+    receivedOn: "11 Oct 2026",
+    status: <span className="status processing">Processing</span>,
+    actions: <button className="action-btn">View</button>,
+  },
+  {
+    vendor: "SecureSoft",
+    fileName: "SecureSoft_Bid.docx",
+    receivedOn: "10 Oct 2026",
+    status: <span className="status warning">Needs Review</span>,
+    actions: <button className="action-btn">Review</button>,
+  },
+  {
+    vendor: "CloudMatrix",
+    fileName: "CloudMatrix_Proposal.pdf",
+    receivedOn: "10 Oct 2026",
+    status: <span className="status success">Validated</span>,
+    actions: <button className="action-btn">View</button>,
+  },
+];
+const [activeTab, setActiveTab] = useState("all");
+  return (
+    <div className="dashboard-shell">
+      <Sidebar items={navItems} />
+
+      <main className="main-panel">
+        <Topbar
+          tenantLabel="Acme Manufacturing (Tenant)"
+          user={{
+            initials: "P",
+            name: "Priya Sharma",
+            role: "Procurement Lead",
+          }}
+        />
+
+        <div className="content-area">
+          
+ <header className="wizard-header">
+            <h1 className="font-bold
+            ">
+              Recieved Proposals
+            </h1>
+            <p>Track and Process vendor responses. AI will extract and validate key information.</p>
+          </header>
+          
+         <ProposalTabs
+    tabs={proposalTabs}
+    activeTab={activeTab}
+    onChange={setActiveTab}
+  />
+
+          <section className="panel">
+            <DataTable
+              columns={columns}
+              rows={rows}
+            />
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}
 function App() {
   return (
     <Routes>
@@ -289,6 +415,10 @@ function App() {
       <Route path="/rfps" element={<RfpPage />} />
       <Route path="/rfps/ai-extracted" element={<AiExtractedRequirementsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+    path="/proposals"
+    element={<ProposalsPage />}
+  />
     </Routes>
   );
 }
